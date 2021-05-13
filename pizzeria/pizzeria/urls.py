@@ -1,4 +1,4 @@
-"""learning_log URL Configuration
+"""pizzeria URL Configuration
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/3.2/topics/http/urls/
@@ -13,11 +13,11 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from django.contrib import admin  # 导入管理网站的模块
-from django.urls import path  # 导入django2/3.x管理URL的函数
-from django.conf.urls import include, url  # 导入django1.x管理URL的函数
+from django.contrib import admin
+from django.urls import path
+from django.conf.urls import url, include
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    url(r'', include('learning_logs.urls')),
+    url(r'', include('pizzas.urls')),
 ]
