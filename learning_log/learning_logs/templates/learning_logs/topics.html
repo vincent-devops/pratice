@@ -1,0 +1,15 @@
+{% extends "learning_logs/base.html" %}
+{% block content %}
+    <p>Topics</p>
+    <ul>
+        {% for topic in topics %}
+            <li>
+                <!-- topic这个URL模式要求听过实参topic_id，所以在url中添加了属性topic.id -->
+                <a href="{% url 'learning_logs:topic' topic.id %}"> {{ topic }} </a>
+            </li>
+        {% empty %}  <!-- 告诉Django当列表topics为空时该怎么办 -->
+            <li>No topics have been added yet.</li>
+        {% endfor %}
+    </ul>
+{% endblock %}
+
