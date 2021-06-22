@@ -1,0 +1,9 @@
+{% extends "learning_logs/base.html" %}
+{% block content %}
+    <p>Add a new topic:</p>
+    <form action="{% url 'learning_logs:new_topic' %}" method="post">
+        {% csrf_token %}  {# 防止攻击者利用表单来获得对服务器未经授权的访问#}
+        {{ form.as_p }}  {# 显示表单：以段落格式渲染所有表单元素，是一种简洁地显示表单的方式 #}
+        <button name="submit">add topic</button>  {# 定义提交按钮 #}
+    </form>
+{% endblock content %}

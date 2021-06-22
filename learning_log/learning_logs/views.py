@@ -1,5 +1,8 @@
 from django.shortcuts import render
+from django.http import HttpResponseRedirect  # 重定向
+from django.urls import reverse  # 此函数根据指定的URL模型确定URL
 from .models import Topic  # 导入与所需数据相关联的模型
+from .forms import TopicForm, EntryForm
 
 
 def index(request):
@@ -20,3 +23,36 @@ def topic(request, topic_id):  # 这个函数接受正则表达式(?P<topic_id>\
     entries = topic.entry_set.order_by('-date_added')  # 获取与该主题相关联的条目，并按date_added倒序排序
     context = {'topic': topic, 'entries': entries}
     return render(request, 'learning_logs/topic.html', context)
+
+
+def new_topic(request):
+    """添加新主题"""
+    if request.method != 'POST':
+        # 未提交数据：创建一个空表单
+        form = TopicForm()
+    else:
+        # POST提交的数据，对数据进行处理
+        form = TopicForm(request.POST)  # 使用用户输入的数据创建一个TopicForm实例，form将包含用户提交的信息
+        if form.is_valid():  # 核实用户是否填写了所有必不可少的字段，且输入的数据与要求的字段类型一致
+            form.save()  # 保存数据到数据库
+            return HttpResponseRedirect(reverse('learning_logs:topics'))  # 跳转到指定的topics url
+    context = {'form': form}  # 上下文字典
+    return render(request, 'learning_logs/new_topic.html', context)
+
+
+def new_entry(request, topic_id):
+    """在特定的主题中添加新条目"""
+    topic = Topic.objects.get(id=topic_id)
+    if request.method != 'POST':
+        form = EntryForm()
+    else:
+        form = EntryForm(data=request.POST)
+        if form.is_valid():
+            new_entry = form.save(commit=False)  # 将提交的数据存储到new_entry中，但不不将它保存到数据库。
+            new_entry.topic = topic  # 关联对应的主题
+            new_entry.save()  # 保存到数据库
+            # 重定向到显示相关主题的页面
+            return HttpResponseRedirect(reverse('learning_logs:topic',
+                                                args=[topic_id]))
+    context = {'topic': topic, 'form': form}
+    return render(request, 'learning_logs/new_entry.html', context)
