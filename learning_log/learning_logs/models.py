@@ -1,4 +1,5 @@
 from django.db import models
+from django_mysql.models import JSONField
 
 
 # Create your models here.
@@ -10,6 +11,7 @@ class Topic(models.Model):
     def __str__(self):
         """返回模型的字符串表示"""
         return self.text
+
 
 class Entry(models.Model):
     """学到的有关某个主题的具体知识"""

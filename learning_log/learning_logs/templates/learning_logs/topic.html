@@ -11,6 +11,10 @@
             <li>
                 <p>{{ entry.date_added|date:'M d, Y H:i' }}</p>  <!-- 竖线|表示模板过滤器--对模板变量的值进行修改的函数 -->
                 <p>{{ entry.text|linebreaks }}</p>  <!-- 过滤器linebreaks将包含换行符的长条目转换为浏览器能够理解的格式，以免显示为一个不间断的文本块-->
+                <p>
+                    {# 我们根据URL模式edit_entry和当前条目的ID属性来确定URL #}
+                    <a href="{% url 'learning_logs:edit_entry' entry.id %}">edit entry</a>
+                </p>
             </li>
         {% empty %}
             <li>

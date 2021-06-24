@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponseRedirect  # 重定向
 from django.urls import reverse  # 此函数根据指定的URL模型确定URL
-from .models import Topic  # 导入与所需数据相关联的模型
+from .models import Topic, Entry  # 导入与所需数据相关联的模型
 from .forms import TopicForm, EntryForm
 
 
@@ -56,3 +56,22 @@ def new_entry(request, topic_id):
                                                 args=[topic_id]))
     context = {'topic': topic, 'form': form}
     return render(request, 'learning_logs/new_entry.html', context)
+
+
+def edit_entry(request, entry_id):
+    """编辑既有条目"""
+    entry = Entry.objects.get(id=entry_id)  # 获取用户要修改的条目对象
+    topic = entry.topic  # 获得与该条目相关联的主题
+    if request.method != 'POST':
+        # GET请求，使用当前条目填充表单
+        form = EntryForm(instance=entry)  # 这个实参让Django创建一个表单，并使用条目对象中的信息填充它
+    else:
+        # POST提交的数据，对数据进行处理
+        # 让Django根据既有对象创建一个表单实例，并根据request.POST中的相关数据对其进行修改
+        form = EntryForm(instance=entry, data=request.POST)
+        if form.is_valid():
+            form.save()
+            return HttpResponseRedirect(reverse('learning_logs:topic',
+                                                args=[topic.id]))
+    context = {'entry': entry, 'topic': topic, 'form': form}
+    return render(request, 'learning_logs/edit_entry.html', context)
